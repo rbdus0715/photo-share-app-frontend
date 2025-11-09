@@ -6,3 +6,4 @@ export type AuthStackParamList = {
 };
 
 export type AuthNavigation = NavigationProp<AuthStackParamList>;
+

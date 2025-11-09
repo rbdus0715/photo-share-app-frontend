@@ -2,12 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import { Button, StyleSheet, Text, View } from "react-native";
 import { AuthRoutes } from "../navigations/routes";
 import { AuthNavigation } from "../navigations/types";
-import Input from "../components/Input";
-import {
-  IconNames,
-  KeyboardTypes,
-  ReturnKeyTypes,
-} from "../components/Input.types";
+import Input, { InputType, ReturnKeyTypes } from "../components/Input/Input";
 
 const SignInScreen = () => {
   const navigation = useNavigation<AuthNavigation>();
@@ -15,12 +10,10 @@ const SignInScreen = () => {
   return (
     <View style={styles.container}>
       <Text>Sign In</Text>
+      <Input inputType={InputType.EMAIL} returnKeyType={ReturnKeyTypes.NEXT} />
       <Input
-        title="EMAIL"
-        placeholder="your@email.com"
-        iconName={IconNames.EMAIL}
-        keyboardType={KeyboardTypes.EMAIL}
-        returnKeyType={ReturnKeyTypes.NEXT}
+        inputType={InputType.PASSWORD}
+        returnKeyType={ReturnKeyTypes.DONE}
       />
       <Button
         title="Sign Up"
