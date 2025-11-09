@@ -1,7 +1,7 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { forwardRef, useState } from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
-import { BLACK } from "../../color";
+import { BLACK, GRAY, PRIMARY } from "../../color";
 import { InputProp } from "./Input.type";
 
 export const KeyboardTypes = {
@@ -45,31 +45,45 @@ const Input = forwardRef<TextInput, InputProp>(
       secureTextEntry,
       iconName: { active, inactive },
     } = InputTypeProps[inputType];
+    const { value } = props;
 
     const [isFocused, setIsFocused] = useState(false);
 
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>{title}</Text>
+        <Text
+          style={[
+            styles.title,
+            { color: value || isFocused ? PRIMARY.DEFAULT : GRAY.DARK },
+          ]}
+        >
+          {title}
+        </Text>
         <View>
           <TextInput
             ref={ref}
             {...props}
             placeholder={placeholder}
             keyboardType={KeyboardTypes[keyboardType]}
-            textContentType="none"
-            autoCapitalize="none"
             secureTextEntry={secureTextEntry}
-            autoCorrect={false}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
-            style={styles.input}
+            textContentType="none"
+            autoCapitalize="none"
+            autoCorrect={false}
+            style={[
+              styles.input,
+              {
+                borderColor: value || isFocused ? PRIMARY.DEFAULT : GRAY.DARK,
+                color: value || isFocused ? PRIMARY.DEFAULT : GRAY.DARK,
+              },
+            ]}
           />
           <View style={styles.icon}>
             <MaterialCommunityIcons
               name={isFocused ? active : inactive}
               size={24}
-              color={BLACK}
+              color={value || isFocused ? PRIMARY.DEFAULT : GRAY.DARK}
             />
           </View>
         </View>
