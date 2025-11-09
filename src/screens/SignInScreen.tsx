@@ -18,12 +18,14 @@ const SignInScreen = () => {
         returnKeyType={ReturnKeyTypes.NEXT}
         value={email}
         onChangeText={(text) => setEmail(text.trim())}
+        styles={inputStyles}
       />
       <Input
         inputType={InputType.PASSWORD}
         returnKeyType={ReturnKeyTypes.DONE}
         value={password}
         onChangeText={(text) => setPassword(text.trim())}
+        styles={inputStyles}
       />
       <Button
         title="Sign Up"
@@ -39,6 +41,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+});
+
+const inputStyles = StyleSheet.create({
+  container: { marginBottom: 20, paddingHorizontal: 20 },
+  input: { borderWidth: 1 },
 });
 
 export default SignInScreen;
