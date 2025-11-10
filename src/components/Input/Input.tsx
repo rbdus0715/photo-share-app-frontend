@@ -1,7 +1,7 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { forwardRef, useState } from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
-import { BLACK, GRAY, PRIMARY } from "../../color";
+import { GRAY, PRIMARY } from "../../color";
 import { InputProp } from "./Input.type";
 
 export const KeyboardTypes = {
