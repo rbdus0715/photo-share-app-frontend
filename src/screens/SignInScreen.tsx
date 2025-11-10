@@ -5,40 +5,45 @@ import Input, { InputType, ReturnKeyTypes } from "../components/Input/Input";
 import { useState } from "react";
 import Button from "../components/Button/Button";
 import { AuthRoutes } from "../navigations/routes";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import SafeInputView from "../components/SafeInputView/SafeInputView";
 
 const SignInScreen = () => {
   const navigation = useNavigation<AuthNavigation>();
+  const { top } = useSafeAreaInsets();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   return (
-    <View style={styles.container}>
-      <Text>Sign In</Text>
-      <Input
-        inputType={InputType.EMAIL}
-        returnKeyType={ReturnKeyTypes.NEXT}
-        value={email}
-        onChangeText={(text) => setEmail(text.trim())}
-        styles={inputStyles}
-      />
-      <Input
-        inputType={InputType.PASSWORD}
-        returnKeyType={ReturnKeyTypes.DONE}
-        value={password}
-        onChangeText={(text) => setPassword(text.trim())}
-        styles={inputStyles}
-      />
-      <Button
-        onPress={() => navigation.navigate(AuthRoutes.SIGN_UP)}
-        title="Sign In"
-        styles={{
-          container: {
-            paddingHorizontal: 20,
-            marginTop: 20,
-          },
-        }}
-      />
-    </View>
+    <SafeInputView>
+      <View style={[styles.container, { paddingTop: top }]}>
+        <Text>Sign In</Text>
+        <Input
+          inputType={InputType.EMAIL}
+          returnKeyType={ReturnKeyTypes.NEXT}
+          value={email}
+          onChangeText={(text) => setEmail(text.trim())}
+          styles={inputStyles}
+        />
+        <Input
+          inputType={InputType.PASSWORD}
+          returnKeyType={ReturnKeyTypes.DONE}
+          value={password}
+          onChangeText={(text) => setPassword(text.trim())}
+          styles={inputStyles}
+        />
+        <Button
+          onPress={() => navigation.navigate(AuthRoutes.SIGN_UP)}
+          title="Sign In"
+          styles={{
+            container: {
+              paddingHorizontal: 20,
+              marginTop: 20,
+            },
+          }}
+        />
+      </View>
+    </SafeInputView>
   );
 };
 
