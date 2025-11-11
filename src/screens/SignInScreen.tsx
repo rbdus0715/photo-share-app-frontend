@@ -7,6 +7,7 @@ import Button from "../components/Button/Button";
 import { AuthRoutes } from "../navigations/routes";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import SafeInputView from "../components/SafeInputView/SafeInputView";
+import TextButton from "../components/TextButton/TextButton";
 
 const SignInScreen = () => {
   const navigation = useNavigation<AuthNavigation>();
@@ -62,6 +63,10 @@ const SignInScreen = () => {
             },
           }}
         />
+        <TextButton
+          title={"회원가입"}
+          onPress={() => navigation.navigate(AuthRoutes.SIGN_UP)}
+        />
       </View>
     </SafeInputView>
   );
@@ -77,5 +82,3 @@ const styles = StyleSheet.create({
 });
 
 export default SignInScreen;
-
-
