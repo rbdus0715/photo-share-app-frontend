@@ -8,7 +8,7 @@ export interface Styles {
 }
 
 export type InputProp = {
-  inputType: "EMAIL" | "PASSWORD";
+  inputType: "EMAIL" | "PASSWORD" | "PASSWORD_CONFIRM";
   returnKeyType: ReturnKeyType;
   value: string;
   onChangeText: (text: string) => void;

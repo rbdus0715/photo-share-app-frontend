@@ -74,6 +74,7 @@ const SignInScreen = () => {
             onSubmitEditing={onSubmit}
           />
           <Button
+            disabled={disabled}
             onPress={() => navigation.navigate(AuthRoutes.SIGN_UP)}
             title="Sign In"
             styles={{
