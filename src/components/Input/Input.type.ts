@@ -13,4 +13,5 @@ export type InputProp = {
   value: string;
   onChangeText: (text: string) => void;
   styles?: Styles;
+  onSubmitEditing: () => void;
 };

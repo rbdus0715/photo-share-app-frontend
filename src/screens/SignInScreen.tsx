@@ -1,8 +1,8 @@
 import { useNavigation } from "@react-navigation/native";
-import { StyleSheet, Text, View } from "react-native";
+import { Keyboard, StyleSheet, Text, TextInput, View } from "react-native";
 import { AuthNavigation } from "../navigations/types";
 import Input, { InputType, ReturnKeyTypes } from "../components/Input/Input";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Button from "../components/Button/Button";
 import { AuthRoutes } from "../navigations/routes";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -11,8 +11,25 @@ import SafeInputView from "../components/SafeInputView/SafeInputView";
 const SignInScreen = () => {
   const navigation = useNavigation<AuthNavigation>();
   const { top } = useSafeAreaInsets();
+  const passwordRef = useRef<TextInput>(null);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [disabled, setDisabled] = useState(true);
+
+  useEffect(() => {
+    setDisabled(!email || !password);
+  }, [email, password]);
+
+  const onSubmit = () => {
+    Keyboard.dismiss();
+    if (!disabled && !isLoading) {
+      setIsLoading(true);
+      console.log(email, password);
+      setIsLoading(false);
+    }
+  };
 
   return (
     <SafeInputView>
@@ -23,14 +40,17 @@ const SignInScreen = () => {
           returnKeyType={ReturnKeyTypes.NEXT}
           value={email}
           onChangeText={(text) => setEmail(text.trim())}
-          styles={inputStyles}
+          styles={{ container: { marginTop: 20 } }}
+          onSubmitEditing={() => passwordRef.current?.focus()}
         />
         <Input
+          ref={passwordRef}
           inputType={InputType.PASSWORD}
           returnKeyType={ReturnKeyTypes.DONE}
           value={password}
           onChangeText={(text) => setPassword(text.trim())}
-          styles={inputStyles}
+          styles={{ container: { marginTop: 20 } }}
+          onSubmitEditing={onSubmit}
         />
         <Button
           onPress={() => navigation.navigate(AuthRoutes.SIGN_UP)}
@@ -52,12 +72,10 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    paddingHorizontal: 20,
   },
 });
 
-const inputStyles = StyleSheet.create({
-  container: { marginBottom: 20, paddingHorizontal: 20 },
-  input: { borderWidth: 1 },
-});
-
 export default SignInScreen;
+
+
