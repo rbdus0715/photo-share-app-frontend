@@ -1,16 +1,16 @@
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import {
+  Alert,
   Image,
   Keyboard,
   ScrollView,
   StyleSheet,
-  Text,
   TextInput,
   View,
 } from "react-native";
 import { AuthNavigation } from "../navigations/types";
 import Input, { InputType, ReturnKeyTypes } from "../components/Input/Input";
-import { useCallback, useEffect, useReducer, useRef, useState } from "react";
+import { useCallback, useReducer, useRef } from "react";
 import Button from "../components/Button/Button";
 import { AuthRoutes } from "../navigations/routes";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -25,7 +25,7 @@ import {
   AuthFormTypes,
   initAuthForm,
 } from "../reducers/authFormReducer";
-import { signIn } from "../api/auth";
+import { getAuthErrorMessage, signIn } from "../api/auth";
 
 const SignInScreen = () => {
   const navigation = useNavigation<AuthNavigation>();
@@ -38,8 +38,13 @@ const SignInScreen = () => {
     Keyboard.dismiss();
     if (!form.disabled && !form.isLoading) {
       dispatch({ type: AuthFormTypes.TOGGLE_LOADING });
-      const user = await signIn(form);
-      // console.log(user);
+      try {
+        const user = await signIn(form);
+        // console.log(user);
+      } catch (e: any) {
+        const message = getAuthErrorMessage(e.code);
+        Alert.alert("로그인 실패", message);
+      }
       dispatch({ type: AuthFormTypes.TOGGLE_LOADING });
     }
   };
