@@ -1,4 +1,4 @@
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import {
   Image,
   Keyboard,
@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { AuthNavigation } from "../navigations/types";
 import Input, { InputType, ReturnKeyTypes } from "../components/Input/Input";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Button from "../components/Button/Button";
 import { AuthRoutes } from "../navigations/routes";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -42,6 +42,17 @@ const SignInScreen = () => {
       setIsLoading(false);
     }
   };
+
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        setEmail("");
+        setPassword("");
+        setIsLoading(false);
+        setDisabled(true);
+      };
+    }, [])
+  );
 
   return (
     <SafeInputView>
