@@ -14,8 +14,14 @@ import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Input, { InputType, ReturnKeyTypes } from "../components/Input/Input";
 import Button from "../components/Button/Button";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
 import { WHITE } from "../color";
+import {
+  AuthForm,
+  authFormReducer,
+  AuthFormTypes,
+  initAuthForm,
+} from "../reducers/authFormReducer";
 
 const SignUpScreen = () => {
   const navigation = useNavigation();
@@ -30,16 +36,30 @@ const SignUpScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [disabled, setDisabled] = useState(true);
 
-  useEffect(() => {
-    setDisabled(!email || !password || password !== passwordConfirm);
-  }, [email, password, passwordConfirm]);
+  const [form, dispatch] = useReducer(authFormReducer, initAuthForm);
+
+  const updateForm = (payload: Partial<AuthForm>) => {
+    const newForm = { ...form, ...payload };
+    const disabled =
+      !newForm.email ||
+      !newForm.password ||
+      newForm.password != newForm.passwordConfirm;
+
+    dispatch({
+      type: AuthFormTypes.UPDATE_FORM,
+      payload: {
+        disabled,
+        ...payload,
+      },
+    });
+  };
 
   const onSubmit = () => {
     Keyboard.dismiss();
-    if (!disabled && !isLoading) {
-      setIsLoading(true);
-      console.log(email, password);
-      setIsLoading(false);
+    if (!form.disabled && !form.isLoading) {
+      dispatch({ type: AuthFormTypes.TOGGLE_LOADING });
+      console.log(form.email, form.password);
+      dispatch({ type: AuthFormTypes.TOGGLE_LOADING });
     }
   };
 
@@ -61,26 +81,28 @@ const SignUpScreen = () => {
           keyboardShouldPersistTaps="always"
         >
           <Input
-            value={email}
-            onChangeText={(text) => setEmail(text.trim())}
+            value={form.email}
+            onChangeText={(text) => updateForm({ email: text.trim() })}
             inputType={InputType.EMAIL}
             returnKeyType={ReturnKeyTypes.NEXT}
             onSubmitEditing={() => passwordRef.current?.focus()}
             styles={{ container: { marginBottom: 20 } }}
           />
           <Input
-            value={password}
+            value={form.password}
             ref={passwordRef}
-            onChangeText={(text) => setPassword(text.trim())}
+            onChangeText={(text) => updateForm({ password: text.trim() })}
             inputType={InputType.PASSWORD}
             returnKeyType={ReturnKeyTypes.NEXT}
             onSubmitEditing={() => passwordConfirmRef.current?.focus()}
             styles={{ container: { marginBottom: 20 } }}
           />
           <Input
-            value={passwordConfirm}
+            value={form.passwordConfirm}
             ref={passwordConfirmRef}
-            onChangeText={(text) => setPAsswordConfirm(text.trim())}
+            onChangeText={(text) =>
+              updateForm({ passwordConfirm: text.trim() })
+            }
             inputType={InputType.PASSWORD_CONFIRM}
             returnKeyType={ReturnKeyTypes.DONE}
             onSubmitEditing={onSubmit}
@@ -89,8 +111,8 @@ const SignUpScreen = () => {
           <Button
             title="회원가입"
             onPress={onSubmit}
-            disabled={disabled}
-            isLoading={isLoading}
+            disabled={form.disabled}
+            isLoading={form.isLoading}
             styles={{ container: { marginTop: 20 } }}
           />
           <HR text={"OR"} styles={{ container: { marginVertical: 30 } }} />
