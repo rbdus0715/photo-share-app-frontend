@@ -25,6 +25,7 @@ import {
   AuthFormTypes,
   initAuthForm,
 } from "../reducers/authFormReducer";
+import { signIn } from "../api/auth";
 
 const SignInScreen = () => {
   const navigation = useNavigation<AuthNavigation>();
@@ -33,11 +34,12 @@ const SignInScreen = () => {
 
   const [form, dispatch] = useReducer(authFormReducer, initAuthForm);
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     Keyboard.dismiss();
     if (!form.disabled && !form.isLoading) {
       dispatch({ type: AuthFormTypes.TOGGLE_LOADING });
-      console.log(form.email, form.password);
+      const user = await signIn(form);
+      // console.log(user);
       dispatch({ type: AuthFormTypes.TOGGLE_LOADING });
     }
   };
