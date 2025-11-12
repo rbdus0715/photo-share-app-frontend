@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { AuthNavigation } from "../navigations/types";
 import Input, { InputType, ReturnKeyTypes } from "../components/Input/Input";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import Button from "../components/Button/Button";
 import { AuthRoutes } from "../navigations/routes";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -19,40 +19,44 @@ import TextButton from "../components/TextButton/TextButton";
 import HR from "../components/HR/HR";
 import { StatusBar } from "expo-status-bar";
 import { WHITE } from "../color";
+import {
+  AuthForm,
+  authFormReducer,
+  AuthFormTypes,
+  initAuthForm,
+} from "../reducers/authFormReducer";
 
 const SignInScreen = () => {
   const navigation = useNavigation<AuthNavigation>();
   const { top, bottom } = useSafeAreaInsets();
   const passwordRef = useRef<TextInput>(null);
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [disabled, setDisabled] = useState(true);
-
-  useEffect(() => {
-    setDisabled(!email || !password);
-  }, [email, password]);
+  const [form, dispatch] = useReducer(authFormReducer, initAuthForm);
 
   const onSubmit = () => {
     Keyboard.dismiss();
-    if (!disabled && !isLoading) {
-      setIsLoading(true);
-      console.log(email, password);
-      setIsLoading(false);
+    if (!form.disabled && !form.isLoading) {
+      dispatch({ type: AuthFormTypes.TOGGLE_LOADING });
+      console.log(form.email, form.password);
+      dispatch({ type: AuthFormTypes.TOGGLE_LOADING });
     }
   };
 
   useFocusEffect(
     useCallback(() => {
-      return () => {
-        setEmail("");
-        setPassword("");
-        setIsLoading(false);
-        setDisabled(true);
-      };
+      return () => dispatch({ type: AuthFormTypes.RESET });
     }, [])
   );
+
+  const updateForm = (payload: Partial<AuthForm>) => {
+    const newForm = { ...form, ...payload };
+    const disabled = !newForm.email || !newForm.password;
+
+    dispatch({
+      type: AuthFormTypes.UPDATE_FORM,
+      payload: { disabled, ...payload },
+    });
+  };
 
   return (
     <SafeInputView>
@@ -74,8 +78,8 @@ const SignInScreen = () => {
           <Input
             inputType={InputType.EMAIL}
             returnKeyType={ReturnKeyTypes.NEXT}
-            value={email}
-            onChangeText={(text) => setEmail(text.trim())}
+            value={form.email}
+            onChangeText={(text) => updateForm({ email: text.trim() })}
             styles={{ container: { marginTop: 20 } }}
             onSubmitEditing={() => passwordRef.current?.focus()}
           />
@@ -83,13 +87,14 @@ const SignInScreen = () => {
             ref={passwordRef}
             inputType={InputType.PASSWORD}
             returnKeyType={ReturnKeyTypes.DONE}
-            value={password}
-            onChangeText={(text) => setPassword(text.trim())}
+            value={form.password}
+            onChangeText={(text) => updateForm({ password: text.trim() })}
             styles={{ container: { marginTop: 20 } }}
             onSubmitEditing={onSubmit}
           />
           <Button
-            disabled={disabled}
+            disabled={form.disabled}
+            isLoading={form.isLoading}
             onPress={() => navigation.navigate(AuthRoutes.SIGN_UP)}
             title="Sign In"
             styles={{
