@@ -1,0 +1,42 @@
+import { NavigationContainer } from "@react-navigation/native";
+import AuthStack from "./AuthStack";
+import { useEffect, useState } from "react";
+import * as SplashScreen from "expo-splash-screen";
+import { Asset } from "expo-asset";
+
+const Navigation = () => {
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        await SplashScreen.preventAutoHideAsync();
+        await Asset.fromModule(
+          require("../../assets/cover.png")
+        ).downloadAsync();
+      } catch (e) {
+        console.log(e);
+      } finally {
+        setIsReady(true);
+      }
+    })();
+  }, []);
+
+  const onReady = async () => {
+    if (isReady) {
+      await SplashScreen.hideAsync();
+    }
+  };
+
+  if (!isReady) {
+    return null;
+  }
+
+  return (
+    <NavigationContainer onReady={onReady}>
+      <AuthStack />
+    </NavigationContainer>
+  );
+};
+
+export default Navigation;
